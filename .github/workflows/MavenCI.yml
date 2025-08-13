@@ -2,11 +2,11 @@ name: MavenCI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ test-thiagsil ]
   pull_request:
-    branches: [ master ]
+    branches: [ test-thiagsil ]
   release:
-    branches: [ master ]
+    branches: [ test-thiagsil ]
     types: [ created ]
 
 jobs:
