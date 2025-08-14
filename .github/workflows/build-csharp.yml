@@ -2,7 +2,7 @@ name: Build CSharp
 
 on:
   push:
-    branches: [ master, native-schema-registry-2025, native-schema-registry-csharp, native-schema-registry-golang ]
+    branches: [ master, native-schema-registry-2025, native-schema-registry-csharp, native-schema-registry-golang, native-schema-registry-csharp-thiagsil ]
   pull_request:
     branches: [ master, native-schema-registry-2025, native-schema-registry-csharp, native-schema-registry-golang ]
   release:
@@ -11,6 +11,9 @@ on:
 
 jobs:
   build-csharp:
+    permissions:
+      id-token: write
+      contents: read
     continue-on-error: false
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -35,6 +38,13 @@ jobs:
           make -j$(nproc) 
           make install 
           swig -version
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-thiagsil
+          role-session-name: session
+          aws-region: us-east-1
 
       - name: Set up .NET SDK
         run: |
@@ -86,3 +96,4 @@ jobs:
           dotnet build . || echo "First build failed as expected"
           # Second build - should succeed
           dotnet build .
+          dotnet test . -v d
